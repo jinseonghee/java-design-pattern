@@ -1,1 +1,1 @@
-# spring-study
+# mvc-spring-boot
