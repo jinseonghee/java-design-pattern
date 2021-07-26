@@ -3,6 +3,10 @@ package com.company.design;
 import com.company.design.adapter.*;
 import com.company.design.aop.AopBrowser;
 import com.company.design.decorator.*;
+import com.company.design.facade.Ftp;
+import com.company.design.facade.Reader;
+import com.company.design.facade.SftpClient;
+import com.company.design.facade.Writer;
 import com.company.design.observer.Button;
 import com.company.design.observer.IButtonListener;
 import com.company.design.proxy.Browser;
@@ -19,20 +23,29 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Button button = new Button("버튼");
+        Ftp ftpClient = new Ftp("www.foo.co.kr", 22, "/home/etc");
+        ftpClient.connect();
+        ftpClient.moveDirectory();
 
-        button.addListener(new IButtonListener() { //익명 클래스로 전달받아 사용
-            @Override
-            public void clickEvent(String event) { //밑에 button.click이 일어나면 내부에서 Listener를 통해 전달해서 매개변수 event에 메시지가 전달되어 출력
-                System.out.println(event);
-            }
-        });
+        Writer writer = new Writer("text.tmp");
+        writer.fileConnect();
+        writer.write();
 
-        button.click("메시지 전달 : click 1");
-        button.click("메시지 전달 : click 2");
-        button.click("메시지 전달 : click 3");
-        button.click("메시지 전달 : click 4");
+        Reader reader = new Reader("text.tmp");
+        reader.fileConnect();
+        reader.fileRead();
 
+        reader.fileDisconnect();
+        writer.fileDisconnect();
+        ftpClient.disConnect();
+
+        //퍼사드 패턴을 사용하면 위에처럼 각각의 객체에 의존하기 보다 SftpClient 객체를 통해 앞쪽의 정면만 바라보도록 객체가 하나 만들어 지고, 안에 복잡한 의존성을 가진 것들은
+        //새로운 인터페이스의 형태로 제공
+        SftpClient sftpClient = new SftpClient("www.foo.co.kr", 22, "/home/etc", "text.tmp");
+        sftpClient.connect();
+        sftpClient.write();
+        sftpClient.read();
+        sftpClient.disConnect();
     }
         //콘센트
         public static void connect (Electronic110V electronic110V){ //main 자체가 static이기 때문에 만든 method도 static 이어야 함
