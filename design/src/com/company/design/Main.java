@@ -15,6 +15,7 @@ import com.company.design.proxy.IBrowser;
 import com.company.design.singleton.AClazz;
 import com.company.design.singleton.BClazz;
 import com.company.design.singleton.SocketClient;
+import com.company.design.strategy.*;
 import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -23,29 +24,28 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Ftp ftpClient = new Ftp("www.foo.co.kr", 22, "/home/etc");
-        ftpClient.connect();
-        ftpClient.moveDirectory();
+        Encoder encoder = new Encoder(); //기본 Encoder
 
-        Writer writer = new Writer("text.tmp");
-        writer.fileConnect();
-        writer.write();
+        //base64
+        EncodingStrategy base64 = new Base64Strategy(); // base64 전략 생성
 
-        Reader reader = new Reader("text.tmp");
-        reader.fileConnect();
-        reader.fileRead();
+        //normal
+        EncodingStrategy normal = new NormalStrategy(); // normal 전략 생성
 
-        reader.fileDisconnect();
-        writer.fileDisconnect();
-        ftpClient.disConnect();
+        String message = "hello java";
 
-        //퍼사드 패턴을 사용하면 위에처럼 각각의 객체에 의존하기 보다 SftpClient 객체를 통해 앞쪽의 정면만 바라보도록 객체가 하나 만들어 지고, 안에 복잡한 의존성을 가진 것들은
-        //새로운 인터페이스의 형태로 제공
-        SftpClient sftpClient = new SftpClient("www.foo.co.kr", 22, "/home/etc", "text.tmp");
-        sftpClient.connect();
-        sftpClient.write();
-        sftpClient.read();
-        sftpClient.disConnect();
+        encoder.setEncodingStrategy(base64);
+        String base64Result = encoder.getMessage(message);
+        System.out.println(base64Result);
+
+        encoder.setEncodingStrategy(normal);
+        String normalResult = encoder.getMessage(message);
+        System.out.println(normalResult);
+
+        encoder.setEncodingStrategy(new AppendStragegy());
+        String appendResult = encoder.getMessage(message);
+        System.out.println(appendResult);
+
     }
         //콘센트
         public static void connect (Electronic110V electronic110V){ //main 자체가 static이기 때문에 만든 method도 static 이어야 함
