@@ -2,6 +2,7 @@ package com.company.design;
 
 import com.company.design.adapter.*;
 import com.company.design.aop.AopBrowser;
+import com.company.design.decorator.*;
 import com.company.design.proxy.Browser;
 import com.company.design.proxy.BrowserProxy;
 import com.company.design.proxy.IBrowser;
@@ -16,44 +17,20 @@ public class Main {
 
     public static void main(String[] args) {
 
-        /*
-        Browser browser = new Browser("www.naver.com");
-        browser.show();
-        browser.show();
-        browser.show();
-        browser.show();
-*/
-        /*
-        IBrowser browser = new BrowserProxy("www.naver.com");
-        browser.show();
-        browser.show();
-        browser.show();
-        browser.show();
-        browser.show();
+        ICar audi = new Audi(1000);
+        audi.showPrice();
 
-         */
+        //a3
+        ICar audi3 = new A3(audi,"A3");
+        audi3.showPrice();
 
+        //a4
+        ICar audi4 = new A4(audi,"A4");
+        audi4.showPrice();
 
-        AtomicLong start = new AtomicLong(); //시간 문제는 동시성 때문에 Atomic 사용
-        AtomicLong end = new AtomicLong();
-
-        IBrowser aopBrowser = new AopBrowser("www.naver.com",
-                () -> { //Runnable을 람다식으로 표현
-                    System.out.println("before");
-                    start.set(System.currentTimeMillis());
-                },
-                () -> {
-                    long now = System.currentTimeMillis();
-                    end.set(now - start.get()); // 총 몇 초
-                }
-        );
-
-        aopBrowser.show();
-        System.out.println("loading time : " + end.get());
-
-        aopBrowser.show();
-        System.out.println("loading time : " + end.get());
-
+        //a5
+        ICar audi5 = new A5(audi,"A5");
+        audi5.showPrice();
     }
         //콘센트
         public static void connect (Electronic110V electronic110V){ //main 자체가 static이기 때문에 만든 method도 static 이어야 함
